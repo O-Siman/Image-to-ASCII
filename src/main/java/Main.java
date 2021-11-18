@@ -1,3 +1,7 @@
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamPanel;
+import com.github.sarxos.webcam.WebcamResolution;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -7,27 +11,34 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        File file = selectImage();
-        if (file == null) {
-            System.err.println("No file selected");
-            System.exit(1);
-            return;
-        }
+        // get default webcam and open it
+        Webcam webcam = Webcam.getDefault();
+        webcam.open();
+//        System.out.print("\033[7m");
 
-        System.out.println("Enter a width and height");
-        String widthString = JOptionPane.showInputDialog("Width");
-        String heightString = JOptionPane.showInputDialog("Height");
+        while (true) {
+//            System.out.println("\033[2J");
+            // get image
+            BufferedImage image = webcam.getImage();
 
-        int width = -1, height = -1;
-        if (!widthString.equals("")) {
-            width = Integer.parseInt(widthString);
-            height = Integer.parseInt(heightString);
-        }
+            // save image to PNG file
+            File file = new File("us.png");
+            try {
+                ImageIO.write(image, "PNG", file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        try {
-            asciiImage(file, width, height);
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                asciiImage(file, webcam.getViewSize().width, webcam.getViewSize().height);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -41,6 +52,23 @@ public class Main {
         }
         return null;
     }
+
+    //        file = selectImage();
+//        if (file == null) {
+//            System.err.println("No file selected");
+//            System.exit(1);
+//            return;
+//        }
+//
+//        System.out.println("Enter a width and height");
+//        String widthString = JOptionPane.showInputDialog("Width");
+//        String heightString = JOptionPane.showInputDialog("Height");
+//
+//        int width = -1, height = -1;
+//        if (!widthString.equals("")) {
+//            width = Integer.parseInt(widthString);
+//            height = Integer.parseInt(heightString);
+//        }
 
     public static void asciiImage(File file, int width, int height) throws IOException {
         BufferedImage image = ImageIO.read(file);
@@ -61,29 +89,34 @@ public class Main {
                 // Calculate the average of the R G B values
                 int average = (red + green + blue) / 3;
 
+                Console1 console1 = new Console1();
+                JTextField textField = console1.getTextField1();
+                StringBuilder builder = new StringBuilder();
+
                 // Output
-                System.out.print("\033[7m");
                 if (x == 0)
                     System.out.println();
                 if (average > 230)
-                    System.out.print(".");
+                    builder.append(".");
                 else if (average > 200)
-                    System.out.print("'");
+                    builder.append("'");
                 else if (average > 180)
-                    System.out.print("\"");
+                    builder.append("\"");
                 else if (average > 150)
-                    System.out.print(":");
+                    builder.append(":");
                 else if (average > 120)
-                    System.out.print("*");
+                    builder.append("*");
                 else if (average > 80)
-                    System.out.print("+");
+                    builder.append("+");
                 else if (average > 50)
-                    System.out.print("%");
+                    builder.append("%");
                 else if (average >= 20)
-                    System.out.print("#");
+                    builder.append("#");
                 else if (average >= 0)
-                    System.out.print("@");
-                System.out.print(" ");
+                    builder.append("@");
+                builder.append(" ");
+
+                textField.setText(builder.toString());
             }
         }
     }

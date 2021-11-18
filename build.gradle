@@ -19,5 +19,5 @@ repositories {
 }
 
 dependencies {
-
+    implementation group: 'com.github.sarxos', name: 'webcam-capture', version: '0.3.12'
 }
