@@ -14,7 +14,7 @@ public class Main {
         // get default webcam and open it
         Webcam webcam = Webcam.getDefault();
         webcam.open();
-//        System.out.print("\033[7m");
+        System.out.print("\033[7m");
 
         while (true) {
 //            System.out.println("\033[2J");
@@ -35,7 +35,7 @@ public class Main {
                 e.printStackTrace();
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -116,7 +116,8 @@ public class Main {
                     builder.append("@");
                 builder.append(" ");
 
-                textField.setText(builder.toString());
+//                textField.setText(builder.toString());
+                System.out.print(builder);
             }
         }
     }
